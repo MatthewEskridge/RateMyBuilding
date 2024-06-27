@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <!-- Building Name -->
+    <div class="row">
+        <div class="col-md-12">
+            <h1>{{ building_name }}</h1>
+        </div>
+    </div>
+
+    <!-- Overall Quality and Rating Distribution -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h2><span class="badge badge-secondary">{{avg_overall_rating}}/5</span></h2>
+            <p>Overall Quality Based on {{ total_ratings }} ratings</p>
+            {% set integer_stars = avg_overall_rating|int %}
+
+            {% for i in range(integer_stars) %}
+            <i class="fas fa-star" style="color: gold"></i>
+            {% endfor %}
+
+            {% if avg_overall_rating|int != avg_overall_rating %}
+            <i class="fas fa-star-half-alt" style="color: gold"></i>
+            {% set total_displayed_stars = integer_stars + 1 %}
+            {% else %}
+            {% set total_displayed_stars = integer_stars %}
+            {% endif %}
+
+            {% set empty_stars = 5 - total_displayed_stars %}
+
+            {% for i in range(empty_stars) %}
+            <i class="far fa-star" style="color: gold"></i>
+            {% endfor %}
+
+
+
+        </div>
+        <div class="col-md-6 text-right">
+            <h3>Rating Distribution:</h3>
+            <p><strong>Aesthetics:</strong> {{ avg_aesthetics}}/5</p>
+            <p><strong>Cleanliness:</strong> {{ avg_cleanliness}}/5</p>
+            <p><strong>Peripherals:</strong> {{ avg_peripherals}}/5</p>
+            <p><strong>Vibes:</strong> {{ avg_vibes}}/5</p>
+        </div>
+    </div>
+
+<!-- Write a Review Button -->
+<div class="row mt-4">
+    <div class="col-md-6">
+        <a class="btn btn-primary" href="{{ url_for('write_review', building_name=building_name) }}">Write a Review</a>
+    </div>
+</div>
+
+<!-- View Position Button -->
+<!-- Ensure that building_url is not None before rendering the button -->
+{% if building_url %}
+<div class="row mt-4">
+    <div class="col-md-6">
+        <a class="btn btn-info" href="{{ building_url }}" target="_blank">View Position</a>
+    </div>
+</div>
+{% endif %}
+
+
+
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h3>Similar Buildings</h3>
+        </div>
+    </div>
+    <div class="row mt-2">
+        {% for similar_building in similar_buildings %}
+        <div class="col-md-3">
+            <div class="box" style="border: 1px solid #ccc; padding: 10px;">
+                <h5><a href="{{ url_for('building_profile', building_name=similar_building.building_name) }}">{{
+                        similar_building.building_name }}</a></h5>
+                <p>Overall Rating: {{ similar_building.avg_overall_rating }} (Based on {{ similar_building.total_ratings
+                    }} ratings)</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+
+
+
+    <!-- List of Reviews -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h3>{{ total_ratings }} Users Ratings:</h3>
+            {% for review in reviews %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <strong>Date:</strong> {{ review.date_created.strftime('%Y-%m-%d') }}
+                </div>
+                <div class="card-body">
+                    <div class="review-scores">
+                        <span style="color: #152238;">Aesthetics: <b>{{ review.aesthetics }}</b></span>
+                        <span style="color: #152238;">Cleanliness: <b>{{ review.cleanliness }}</b></span>
+                        <span style="color: #152238;">Peripherals: <b>{{ review.peripherals }}</b></span>
+                        <span style="color: #152238;">Vibes: <b>{{ review.vibes }}</b></span>
+                    </div>
+                    <br>
+                    <p style="color: #152238;">{{ review.description }}</p>
+                    {% if review.room %}
+                    <p style="color: #152238;">Room: {{ review.room }}</p>
+                    {% endif %}
+                    <div class="button-container" style="display: flex">
+                        <form method="post" action="{{ url_for('like_review', review_id=review.id) }}">
+                            Helpful
+                            <button type="submit" class="btn like-button" data-review-id="{{ review.id }}"
+                                style="display: inline-block; margin-right: 2px;">
+                                <img src="{{ url_for('static', filename='img/thumbs-up.svg') }}" alt="like button"
+                                    height="22">
+                                <span class="like-count">{{ review.likes }}</span>
+                                <span class="tooltip">Helpful</span></button>
+                        </form>
+                        <form method="post" action="{{ url_for('dislike_review', review_id=review.id) }}">
+                            <button type="submit" class="btn dislike-button" data-review-id="{{ review.id }}"
+                                style="display: inline-block; margin-right: 2px;">
+                                <img src="{{ url_for('static', filename='img/thumbs-down.svg') }}" alt="dislike button"
+                                    height="22" style="transform: scaleX(-1);">
+                                <span class="dislike-count">{{ review.dislikes }}</span>
+                                <span class="tooltip">Not helpful</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <br>
+            <button type="button" class="btn btn-light ml-2" onclick="window.history.back();">Back</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const likeButtons = document.querySelectorAll('.like-button');
+            const dislikeButtons = document.querySelectorAll('.dislike-button');
+
+            likeButtons.forEach(button => {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const reviewId = button.getAttribute('data-review-id');
+                    likeReview(reviewId);
+                });
+            });
+
+            dislikeButtons.forEach(button => {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const reviewId = button.getAttribute('data-review-id');
+                    dislikeReview(reviewId);
+                });
+            });
+
+            function likeReview(reviewId) {
+                // Send a POST request to your Flask route for liking a review
+                fetch(`/like_review/${reviewId}`, { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Update the like count on the page
+                        const likeCountElement = document.querySelector(`[data-review-id="${reviewId}"] .like-count`);
+                        if (likeCountElement) {
+                            likeCountElement.textContent = data.likes;
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+
+            function dislikeReview(reviewId) {
+                // Send a POST request to your Flask route for disliking a review
+                fetch(`/dislike_review/${reviewId}`, { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Update the dislike count on the page
+                        const dislikeCountElement = document.querySelector(`[data-review-id="${reviewId}"] .dislike-count`);
+                        if (dislikeCountElement) {
+                            dislikeCountElement.textContent = data.dislikes;
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        });
+    </script>
+
+    {% endblock %}

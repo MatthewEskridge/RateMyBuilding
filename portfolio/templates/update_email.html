@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}
+    Update Email
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Update Email</h1>
+    <form method="POST" class="d-flex flex-column align-items-start">
+        <!-- Include CSRF token for security -->
+        {{ form.hidden_tag() }}
+        {{ form.new_email.label }}<br>
+        {{ form.new_email }}<br>
+        <!-- Update Email and Back Button -->
+        <div class="d-flex mt-2">
+            <input type="submit" value="Update Email" class="btn btn-primary">
+            <!-- Back Button -->
+            <button type="button" class="btn btn-light ml-2" onclick="window.history.back();">Back</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

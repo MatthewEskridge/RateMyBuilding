@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}
+    Write a Review
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Write a Review</h1>
+    
+    <form method="POST" action="{{ url_for('review_page') }}">
+        {{ form.hidden_tag() }}
+        
+        <div class="mb-3">
+            {{ form.building.label(class="form-label") }}
+            {{ form.building(class="form-select") }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.aesthetics.label(class="form-label") }}
+            {{ form.aesthetics(class="form-select") }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.cleanliness.label(class="form-label") }}
+            {{ form.cleanliness(class="form-select") }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.peripherals.label(class="form-label") }}
+            {{ form.peripherals(class="form-select") }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.vibes.label(class="form-label") }}
+            {{ form.vibes(class="form-select") }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.content.label(class="form-label") }}
+            {{ form.content(class="form-control", rows=3) }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.classroom_name.label(class="form-label") }}
+            {{ form.classroom_name(class="form-control") }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.submit(class="btn btn-primary") }}
+            <!-- Back Button -->
+            <button type="button" class="btn btn-light ml-2" onclick="window.history.back();">Back</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

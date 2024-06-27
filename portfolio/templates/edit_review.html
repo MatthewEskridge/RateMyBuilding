@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}
+    Edit Review
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Edit Your Review</h1>
+    
+    <form method="POST" action="{{ url_for('edit_user_review', review_id=review.id) }}">
+        {{ form.hidden_tag() }}
+        
+        <div class="mb-3">
+            <p class="form-text">{{ review.buildingName }}</p>
+        </div>      
+        
+        <div class="mb-3">
+            {{ form.aesthetics.label(class="form-label") }}
+            {{ form.aesthetics(class="form-select", selected=review.aesthetics) }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.cleanliness.label(class="form-label") }}
+            {{ form.cleanliness(class="form-select", selected=review.cleanliness) }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.peripherals.label(class="form-label") }}
+            {{ form.peripherals(class="form-select", selected=review.peripherals) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.vibes.label(class="form-label") }}
+            {{ form.vibes(class="form-select", selected=review.vibes) }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.content.label(class="form-label") }}
+            {{ form.content(class="form-control", rows=3) }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form.classroom_name.label(class="form-label") }}
+            {{ form.classroom_name(class="form-control", value=review.room) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.submit(class="btn btn-primary") }}
+            <!-- Back Button -->
+            <a href="{{ url_for('view_user_review') }}" class="btn btn-light ml-2">Back</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

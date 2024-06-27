@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}
+    Account Information
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Account Information</h1>
+    <p>Email: {{ current_user.email_address }}</p>
+    
+    <!-- Flexbox container for the buttons -->
+    <div class="button-container" style="display: flex; gap: 10px;">
+        <a href="{{ url_for('update_email') }}" class="btn btn-primary">Update Email</a>
+        <a href="{{ url_for('change_password') }}" class="btn btn-secondary">Change Password</a>
+    <!-- Back Button -->
+    </div>
+    <br>
+    <button class="btn btn-light" onclick="window.history.back();">Back</button>
+</div>
+{% endblock %}

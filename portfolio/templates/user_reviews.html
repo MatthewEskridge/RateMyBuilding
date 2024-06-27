@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}
+    View Your Reviews
+{% endblock %}
+
+{% block content %}
+
+<h1>Your Reviews:</h1>
+
+{% if current_user.userReview %}
+    {% for review in current_user.userReview %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3>{{ review.buildingName}}</h3>
+            </div>
+            <div class="date">
+                <br>
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <b><span style="color: #152238;">{{ review.date_created.strftime('%m-%d-%Y') }}</b></span>
+            </div>
+            <br>
+            <div class="card-body">
+                <div class="aesthetics-cleanliness">
+                    <span style="color: #152238;">Aesthetics: <b>{{ review.aesthetics }}</b></span>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span style="color: #152238;">Cleanliness: <b>{{ review.cleanliness }}</b></span>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span style="color: #152238;">Peripherals: <b>{{ review.peripherals }}</b></span>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span style="color: #152238;">Vibes: <b>{{ review.vibes }}</b></span>
+                </div>
+                <br>
+                <p style="color: #152238;">{{ review.description }}</p>
+            {% if review.room == '' %}
+            {% else %}
+                <p style="color: #152238;">Room: {{ review.room }}</p>
+            {% endif %}
+            <br>
+            <div class="button-group">
+                <a class="btn btn-outline-info" href="{{ url_for('edit_user_review', review_id=review.id) }}">Edit</a>
+                <a class="btn btn-outline-danger" onclick="return confirmDeletion()" href="/delete_review/{{review.id }}">
+                    Delete
+                </a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <br><p style="color: #152238;">You have not yet left any reviews.</p>
+{% endif %}
+
+{% endblock %}
